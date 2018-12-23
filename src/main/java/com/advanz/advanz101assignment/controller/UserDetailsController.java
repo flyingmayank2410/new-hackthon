@@ -66,11 +66,13 @@ public class UserDetailsController {
 	
 	@PostMapping("/save/list")
 	@ApiOperation(tags = "Users Operations",nickname="saveUser", value = "Save user details", httpMethod="POST")
-	public Iterable<UserDetails> saveUserList(@RequestBody final List<UserDetailsForm> userDetailsFormList) {
-		Iterable<UserDetails> userDetailsList = null;
+	public @ResponseBody ResponseEntity<Map<String, Object>> saveUserList(@RequestBody final List<UserDetailsForm> userDetailsFormList) {
+		Map<String, List<UserDetails>> responseMap = null;
+		ApiResponse apiResponse = new ApiResponse();
 		if(userDetailsFormList != null && userDetailsFormList.size() > 0)
-		 userDetailsList = userDetailsService.saveListOfUsers(userDetailsFormList);
-		return userDetailsList;
+			responseMap = userDetailsService.saveListOfUsers(userDetailsFormList);
+		apiResponse.setSuccessResult(responseMap);
+		return new ResponseEntity<Map<String, Object>>(apiResponse.getSuccessObject(), HttpStatus.OK);
 		
 	}
 	
@@ -80,18 +82,7 @@ public class UserDetailsController {
 		List<UserDetails> userDetailsList = userDetailsService.findAll();
 		return userDetailsList;
 	}
-	
-	/*@GetMapping("/mailId/{mailId}")
-	@ApiOperation(tags = "Users Operations",nickname="findUserById", value = "Get user details by id", httpMethod="GET")
-	public UserDetails findUserDetailsByMailId(@PathVariable(value="mailId") final String mailId) {
-		UserDetails userDetails  = null;
-		if(mailId != null) {
-		 userDetails = userDetailsService.findUserByMailId(mailId);
-		}
-		return userDetails;
-		
-	}*/
-	
+
 	@GetMapping("/signin/{mailId}/{password}")
 	@ApiOperation(tags = "Users Operations",nickname="SignIn", value = "Login User", httpMethod="GET")
 	public @ResponseBody ResponseEntity<Map<String, Object>> signIn(@PathVariable final String mailId, 

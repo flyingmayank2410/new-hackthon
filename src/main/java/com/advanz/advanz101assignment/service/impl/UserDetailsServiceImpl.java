@@ -73,6 +73,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 				userDetails.setLastName(userDetailsForm.getLastName());
 				userDetails.setPassword(userDetailsForm.getPassword());
 				userDetails.setUserName(userDetailsForm.getUserName());
+				userDetails.setAddress(userDetailsForm.getAddress());
+				userDetails.setContactNo(userDetailsForm.getContactNo());
 			}
 		}
 		userDetails = userDetailsRepository.save(userDetails);
@@ -84,25 +86,22 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	}
 
 	@Override
-	public Iterable<UserDetails> saveListOfUsers(List<UserDetailsForm> userDetailsFormList) {
-		List<UserDetails> userDetailsList = new ArrayList<>();
-		UserDetails userDetails = null;
+	public Map<String, List<UserDetails>> saveListOfUsers(List<UserDetailsForm> userDetailsFormList) {
+		Map<String, List<UserDetails>> mapResponseList = new HashMap<>();
 		if (userDetailsFormList != null) {
 			for (UserDetailsForm userDetailsForm : userDetailsFormList) {
-				userDetails = new UserDetails();
 
-				userDetails.setFirstName(userDetailsForm.getFirstName());
-				userDetails.setLastName(userDetailsForm.getLastName());
-				userDetails.setPassword(userDetailsForm.getPassword());
-				userDetails.setUserName(userDetailsForm.getUserName());
-				userDetails.setContactNo(userDetailsForm.getContactNo());
-				userDetails.setAddress(userDetailsForm.getAddress());
-				
-				userDetailsList.add(userDetails);
+				Map<String, UserDetails> mapResponse1 = save(userDetailsForm);
+				String key = mapResponse1.keySet().iterator().next();
+				List<UserDetails> userDetailsList = mapResponseList.get(key);
+				if (userDetailsList == null) {
+					userDetailsList = new ArrayList<>();
+				}
+				userDetailsList.add(mapResponse1.get(key));
+				mapResponseList.put(key, userDetailsList);
 			}
 		}
-		return userDetailsRepository.saveAll(userDetailsList);
-
+		return mapResponseList;
 	}
 
 	@Override
@@ -125,14 +124,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		result = UserCredentialsVlaidation.isValidMail(mailId);
 		if (result == false) {
 			userResponseMap.put("Invalid Email", userDetails);
-		} else {
+		}else if(password != null && password.length() < 5) {
+			userResponseMap.put("Please Enter Correct email and password", userDetails);
+		}
+		else {
 			userDetails = findUserByMailId(mailId);
-			if(userDetails == null) {
+			if (userDetails == null) {
 				userResponseMap.put("Please Enter Correct email and password", userDetails);
-			}else {
-				if(userDetails.getPassword() != null && userDetails.getPassword().equals(password)) {
+			} else {
+				if (userDetails.getPassword() != null && userDetails.getPassword().equals(password)) {
 					userResponseMap.put("Login Successfully", userDetails);
-				}else {
+				} else {
 					userDetails = null;
 					userResponseMap.put("Please Enter Correct email and password", userDetails);
 				}

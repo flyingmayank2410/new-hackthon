@@ -22,7 +22,7 @@ public interface UserDetailsService {
 
 	Map<String, UserDetails> save(UserDetailsForm userDetailsForm);
 
-	Iterable<UserDetails> saveListOfUsers(List<UserDetailsForm> userDetailsFormList);
+	Map<String, List<UserDetails>> saveListOfUsers(List<UserDetailsForm> userDetailsFormList);
 
 	List<UserDetails> findAll();
 	
