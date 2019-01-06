@@ -77,4 +77,10 @@ public class CarDetails implements Serializable {
 		this.userDetails = userDetails;
 	}
 
+	@Override
+	public String toString() {
+		return "CarDetails [carId=" + carId + ", carModel=" + carModel + ", maxbidPrice=" + maxbidPrice
+				+ ", userDetails=" + userDetails + "]";
+	}
+
 }

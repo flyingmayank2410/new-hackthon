@@ -1,5 +1,6 @@
 package com.skillenza.config;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,8 @@ public class AppConfig {
 	
 	@Scheduled(fixedRate=3000)
 	public List<CarDetails> getAllCarDetailsDynamically(){
-		System.out.println("List of cars");
-		return carDetailsService.getAllCars();
+		List<CarDetails> list = carDetailsService.getAllCars();
+		System.out.println(Collections.singleton(list));
+		return list;
 	}
 }
